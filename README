@@ -1,0 +1,45 @@
+# 🤖 AI-Powered LinkedIn + Twitter Posting Agent (n8n Workflow)
+
+This repository contains an **automation workflow built in n8n** during my internship period at company.  
+The agent helps automate company content publishing by generating **SEO-friendly LinkedIn posts** and **tweet-sized content for Twitter (X)** directly from Google Sheets, saving hours of manual work.  
+
+---
+
+## 🚀 Features
+This workflow (`post for linkedin and twitter.json`) includes:
+1. **Google Sheets Integration** – Reads post ideas directly from a sheet.  
+2. **AI Expansion** – Uses an LLM to create professional, SEO-optimized LinkedIn posts (1,200–2,800 chars).  
+3. **Twitter Optimization** – Automatically trims posts into 280-character tweets.  
+4. **Dual Publishing** – Posts simultaneously to **LinkedIn** and **Twitter (X)**.  
+5. **Human-Like Scheduling** – Adds random wait times (according to user requirement) between actions to mimic natural posting.  
+6. **Batch Processing** – Handles multiple rows of ideas in one run.  
+7. **Merge & Tracking** – Keeps posts synced across both platforms.  
+
+✅ **Impact**: This automation reduces manual effort, maintains consistency in branding, and optimizes for **reach, SEO, and engagement**.
+
+---
+
+## 🛠️ Tech Stack
+- [n8n](https://n8n.io/) – Workflow automation  
+- Google Sheets API – Input source  
+- LinkedIn API – Post publishing  
+- Twitter API – Tweet publishing  
+- AI Language Model – Content expansion & SEO optimization  
+
+---
+
+## 📂 Repository Contents
+- `post for linkedin and twitter.json` → The n8n workflow export file  
+- `README.md` → Documentation (this file)  
+- `images/` → Folder for screenshots   
+
+---
+
+## 📸 Workflow Screenshot
+
+
+Example:  
+![Workflow Screenshot](images/workflow.png)
+
+---
+

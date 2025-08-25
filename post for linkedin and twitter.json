@@ -1,0 +1,337 @@
+{
+  "name": "post for linkedin and twitter",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -384,
+        0
+      ],
+      "id": "baac3779-335d-4db3-9638-f46fdadbe251",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "let tweet = $json.text || \"\";\nif (tweet.length > 280) {\n  tweet = tweet.slice(0, 277) + \"...\";\n}\nreturn [{ json: { tweet } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -192
+      ],
+      "id": "b37e29c9-6c66-4aa6-a548-5f1082b51456",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional LinkedIn content writer and SEO specialist.  \n\nYour task is to create a long, engaging LinkedIn article-style post based on the given title.  \n\nTitle: {{ $json.Title }}  \n\n### SEO + Writing Instructions:\n- Optimize for the keyword {{ $json.Title }} and use it naturally 3–5 times.  \n- Include related keywords such as \"Artificial Intelligence\", \"Future of AI\", \"AI Applications\", and \"Technology Trends\".  \n- Start with a powerful hook (1–2 sentences) to grab attention.  \n- Write in a professional yet conversational tone suitable for LinkedIn.  \n- Expand the content to 1,200–2,800 characters.The response must never exceed 3,000 characters (including spaces) for better SEO and LinkedIn reach.  \n- Use H2-style subheadings (##),(-),(numbers) or stickers for clarity and structure.  \n- Keep paragraphs short (2–4 lines) for readability.  \n- Add storytelling, real-world examples, or practical insights to make it relatable.    \n- Finish with 3–5 relevant hashtags.  \n- Do NOT use Markdown symbols like **, *, \\*\\*, or backticks. Write in plain text only.  ",
+        "batching": {
+          "batchSize": null
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        336,
+        0
+      ],
+      "id": "adcb941e-b799-40c9-a3f4-0e537d1d436c",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "gemma:2b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        336,
+        224
+      ],
+      "id": "9aa5cab4-7328-4565-9935-2122ac593ea4",
+      "name": "Ollama Model1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "m5xb32ZSZPvhSjl2",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "person": "oLrVLmkyEs",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        896,
+        16
+      ],
+      "id": "11c0c9b0-6de1-4707-8b0e-9ec6a0fac247",
+      "name": "Create a post",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "TINWpkKdqL90Oyaz",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.tweet }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        880,
+        -192
+      ],
+      "id": "0a9efc93-7fab-47a4-bfe9-4c374b0830af",
+      "name": "Create Tweet",
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "ETqGpHqGl9w47A5D",
+          "name": "X account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1NxDAp4C7VN4PzVIdmTNodQdb0WB9oPAc0kV2O_ALKjY",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NxDAp4C7VN4PzVIdmTNodQdb0WB9oPAc0kV2O_ALKjY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -192,
+        0
+      ],
+      "id": "ba9d4573-8b05-421c-8a3d-a93e26f8fbbf",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "IYxAZ2nUxv0LMgrI",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        80,
+        -48
+      ],
+      "id": "ad2bf795-bedd-4ad5-8a59-3f6970cedd68",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Function Node\nconst minMinutes = 3;   // minimum wait (in minutes)\nconst maxMinutes = 5;  // maximum wait (in minutes)\n\nconst randomMinutes = Math.floor(Math.random() * (maxMinutes - minMinutes + 1)) + minMinutes;\nconst waitTimeMs = randomMinutes * 60 * 1000;\n\nreturn [\n  {\n    json: {\n      waitTime: waitTimeMs,\n      waitMinutes: randomMinutes\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1296,
+        80
+      ],
+      "id": "a8dfe7f7-d323-4a17-8e6d-d979d70b2135",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "amount": "={{ $json.waitMinutes }}",
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        688,
+        240
+      ],
+      "id": "0a70b5b6-a22a-445e-88d6-64dbf8fa9999",
+      "name": "Wait",
+      "webhookId": "460f1996-5e97-4fc0-8b17-aed16ddea88a"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1120,
+        -80
+      ],
+      "id": "d4433592-324f-42e8-b4d5-b05cbc5456ff",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Create Tweet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Create a post",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Create Tweet": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5efe2733-6ac1-4c83-9050-2a5ef6464c97",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0281d1280fd18283f3dd5f11fa31ef93abea3d333596c7b272b4f95aa124693c"
+  },
+  "id": "2hsy3rAbJ0iC8N08",
+  "tags": []
+}
